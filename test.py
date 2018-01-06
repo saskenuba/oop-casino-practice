@@ -2,30 +2,49 @@
 """
 
 import unittest
-from classes import Outcome, Bin
+from classes import Outcome, Bin, Wheel
+from classes import NonRandom
 
 
-class OutcomeTest(unittest.TestCase):
+class GameTestCase(unittest.TestCase):
+    def setUp(self):
+        self.outcome1 = Outcome("15", 36)
+        self.outcome2 = Outcome("16", 35)
+        self.outcome3 = Outcome("00-1-3-5", 5)
+        self.outcome4 = Outcome("1-3-5-12", 12)
+
+        # creating wheel with random value
+        self.rouletteWheel = Wheel(22)
+
+
+class OutcomeTest(GameTestCase):
     def runTest(self):
-        outcome1 = Outcome("hehe", 15)
-        outcome2 = Outcome("hehe", 4)
-        outcome3 = Outcome("affem", 9)
-        self.assertEqual(outcome1, outcome2)
-        self.assertNotEqual(outcome3, outcome2)
-        print(outcome2.winAmount(4))
+        #self.assertEqual(self.outcome1, self.outcome2)
+        self.assertNotEqual(self.outcome3, self.outcome2)
 
 
-class BinTest(unittest.TestCase):
-    def runTestBin(self):
-        outcome1 = Outcome("rsrs", 15)
-        outcome2 = Outcome("hehe", 4)
-        outcome3 = Outcome("sacanage", 9)
-        zero = Bin(outcome1, outcome2)
-        zerozero = Bin(outcome3)
-        self.assertIs(zero, Bin)
-        self.assertIs(zerozero, Bin)
-        print(zero)
+class BinTest(GameTestCase):
+    def runTest(self):
+        zero = Bin(self.outcome1, self.outcome2)
+        zerozero = Bin(self.outcome3)
+        lowTwelve = Bin(self.outcome1, self.outcome3)
+        self.assertIsInstance(zero, Bin)
+        self.assertIsInstance(zerozero, Bin)
+        print(lowTwelve)
 
+
+class WheelTest(GameTestCase):
+    def runTest(self):
+        self.rouletteWheel.addOutcome(5, Outcome("1-3-4", 24))
+        self.rouletteWheel.addOutcome(1, self.outcome2)
+        self.rouletteWheel.addOutcome(22, self.outcome1)
+        self.assertIsInstance(self.rouletteWheel.bins[5], Bin)
+        print(self.rouletteWheel.next())
+
+
+testCase = OutcomeTest()
+testCase = BinTest()
+testCase = WheelTest()
 
 if __name__ == '__main__':
     unittest.main()
