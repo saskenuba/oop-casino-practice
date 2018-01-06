@@ -4,6 +4,7 @@
 import unittest
 from classes import Outcome, Bin, Wheel
 from classes import NonRandom
+from BinBuilder import BinBuilder
 
 
 class GameTestCase(unittest.TestCase):
@@ -39,12 +40,19 @@ class WheelTest(GameTestCase):
         self.rouletteWheel.addOutcome(1, self.outcome2)
         self.rouletteWheel.addOutcome(22, self.outcome1)
         self.assertIsInstance(self.rouletteWheel.bins[5], Bin)
-        print(self.rouletteWheel.next())
+        print(self.rouletteWheel.get(22))
+
+
+class BinBuilderTest(GameTestCase):
+    def runTest(self):
+        BinBuilder(self.rouletteWheel)
+        print(self.rouletteWheel.get(30))
 
 
 testCase = OutcomeTest()
 testCase = BinTest()
 testCase = WheelTest()
+testCase = BinBuilderTest()
 
 if __name__ == '__main__':
     unittest.main()
