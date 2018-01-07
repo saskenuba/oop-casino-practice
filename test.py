@@ -46,7 +46,7 @@ class WheelTest(GameTestCase):
 class BinBuilderTest(GameTestCase):
     def runTest(self):
         BinBuilder(self.rouletteWheel)
-        print(self.rouletteWheel.get(30))
+        print(self.rouletteWheel.get(4))
 
 
 testCase = OutcomeTest()
