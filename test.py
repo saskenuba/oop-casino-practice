@@ -3,7 +3,6 @@
 
 import unittest
 from classes import Outcome, Bin, Wheel
-from classes import NonRandom
 from BinBuilder import BinBuilder
 
 
@@ -20,7 +19,7 @@ class GameTestCase(unittest.TestCase):
 
 class OutcomeTest(GameTestCase):
     def runTest(self):
-        #self.assertEqual(self.outcome1, self.outcome2)
+        self.assertIsInstance(self.outcome1, Outcome)
         self.assertNotEqual(self.outcome3, self.outcome2)
 
 
@@ -46,7 +45,7 @@ class WheelTest(GameTestCase):
 class BinBuilderTest(GameTestCase):
     def runTest(self):
         BinBuilder(self.rouletteWheel)
-        print(self.rouletteWheel.get(4))
+        print(self.rouletteWheel.get(1))
 
 
 testCase = OutcomeTest()

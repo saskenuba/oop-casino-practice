@@ -50,8 +50,8 @@ class Bin():
 
 class Wheel():
     def __init__(self, rng):
-        "This contains the 38 bins of the Roulette, and a random number generator to \
-        generate outcomes"
+        """This contains the 38 bins of the Roulette, and a random number generator to
+        generate outcomes"""
 
         self.bins = tuple(Bin() for i in range(38))
         self.rng = rng
