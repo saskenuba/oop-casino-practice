@@ -17,7 +17,7 @@ class BinBuilder:
         self.columnBets()
         self.splitbets()
         self.cornerBets()
-        self.evenMoneyBets()
+        self.outsideBets()
 
     def straightBets(self):
         """Straight bets are simple, one for each number, 1 to 36"""
@@ -100,7 +100,7 @@ class BinBuilder:
                 self.wheel.addOutcome(currentBin + 3, newOutcome)
                 self.wheel.addOutcome(currentBin + 4, newOutcome)
 
-    def evenMoneyBets(self):
+    def outsideBets(self):
         """ These are all 'outside' bets """
         for i in range(1, 37):
             currentNumber = i
@@ -128,11 +128,11 @@ class BinBuilder:
                     34, 36
                 ]
 
-                if currentNumber in reds:
-                    """Red Bet"""
-                    newOutcome = Outcome('Red Bet', 1)
-                    self.wheel.addOutcome(currentNumber, newOutcome)
-                else:
-                    """Black Bet"""
-                    newOutcome = Outcome('Black Bet', 1)
-                    self.wheel.addOutcome(currentNumber, newOutcome)
+            if currentNumber in reds:
+                """Red Bet"""
+                newOutcome = Outcome('Red Bet', 1)
+                self.wheel.addOutcome(currentNumber, newOutcome)
+            else:
+                """Black Bet"""
+                newOutcome = Outcome('Black Bet', 1)
+                self.wheel.addOutcome(currentNumber, newOutcome)
