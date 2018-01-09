@@ -10,11 +10,11 @@ class Passenger57():
 
     def placeBets(self):
         """Updates the table he is playing with bets."""
-        self.playerNewBet = Bet(5, self.favoriteBet)
+        self.playerNewBet = Bet(200, self.favoriteBet)
         self.table.placeBet(self.playerNewBet)
 
     def win(self, bet):
-        print('You just won {}'.format(bet.winAmount()))
+        print('You won {} by betting {}.'.format(bet.winAmount(), bet))
 
     def lose(self, bet):
-        print('You lost {}. Better luck next time'.format(bet.loseAmount()))
+        print('You lost {} by betting {}.'.format(bet.loseAmount(), bet))

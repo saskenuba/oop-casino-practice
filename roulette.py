@@ -31,7 +31,10 @@ class RouletteGame():
         print()
         print('Active bets on table {}'.format(activeBets))
 
-        for oc in winningBin.outcomes:
-            if oc in activeBets:
-                return player.win(player.playerNewBet)
-        player.lose(player.playerNewBet)
+        for oc in activeBets:
+            if oc in winningBin.outcomes:
+                player.win(player.playerNewBet)
+            else:
+                player.lose(player.playerNewBet)
+
+        return {'winningBin': winningBin, 'activeBets': activeBets}

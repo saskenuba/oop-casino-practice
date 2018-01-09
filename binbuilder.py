@@ -79,7 +79,7 @@ class BinBuilder:
                     self.wheel.addOutcome(currentBin, newOutcome)
                     self.wheel.addOutcome(currentBin + 1, newOutcome)
                 """On last row, dont assign split bets downwards"""
-                if currentBin <= 34:
+                if currentBin < 34:
                     newOutcome = Outcome('Split {}-{}'.format(
                         currentBin, currentBin + 3), 17)
                     self.wheel.addOutcome(currentBin, newOutcome)

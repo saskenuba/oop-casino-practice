@@ -10,11 +10,18 @@ class NonRandom(random.Random):
     chose that seed as the next number """
 
     def __init__(self):
-        self.value = 0
+        pass
 
     def setSeed(self, value):
         self.value = value
+
+    def randomInt(self):
         return self.value
 
     def choice(self, sequence):
         return sequence[self.value]
+
+    @staticmethod
+    def _choice(sequence, seed):
+        """Special case if we want to feed a existing seed."""
+        return sequence[seed]

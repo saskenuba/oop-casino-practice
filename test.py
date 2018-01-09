@@ -5,8 +5,9 @@ import unittest
 from classes import Outcome, Bin, Wheel, Bet, Table
 from roulette import RouletteGame
 from player import Passenger57
-from BinBuilder import BinBuilder
+from binbuilder import BinBuilder
 from exceptions import InvalidBet
+from utility import NonRandom
 
 
 class GameTestCase(unittest.TestCase):
@@ -16,8 +17,10 @@ class GameTestCase(unittest.TestCase):
         self.outcome3 = Outcome("00-1-3-5", 5)
         self.outcome4 = Outcome("1-3-5-12", 12)
 
-        # creating wheel with random value
-        self.rouletteWheel = Wheel(22)
+        # creating wheel with nonrandom value
+        notSoRandom = NonRandom()
+        notSoRandom.setSeed(35)
+        self.rouletteWheel = Wheel(notSoRandom.randomInt())
 
 
 class OutcomeTest(GameTestCase):
@@ -33,7 +36,7 @@ class BinTest(GameTestCase):
         lowTwelve = Bin(self.outcome1, self.outcome3)
         self.assertIsInstance(zero, Bin)
         self.assertIsInstance(zerozero, Bin)
-        print(lowTwelve)
+        self.assertIsInstance(lowTwelve, Bin)
 
 
 class WheelTest(GameTestCase):
@@ -46,15 +49,14 @@ class WheelTest(GameTestCase):
         """This is also testing getting the outcome from the wheel
         and placing a bet on it"""
         myOutcome = self.rouletteWheel.getOutcome('Street 4-5-6')
-        myBet = Bet(10, myOutcome)
-        print(myBet)
-        print(myBet.winAmount())
+        newBet = Bet(10, myOutcome)
+        self.assertEqual(newBet.winAmount(),
+                         (newBet.amount * myOutcome.odds) + newBet.amount)
 
 
 class BinBuilderTest(GameTestCase):
     def runTest(self):
         BinBuilder(self.rouletteWheel)
-        print(self.rouletteWheel.next())
 
 
 class BetTest(GameTestCase):
@@ -62,8 +64,9 @@ class BetTest(GameTestCase):
         BinBuilder(self.rouletteWheel)
         outcome5 = Outcome('Number 25', 35)
         newBet = Bet(25, outcome5)
-        print(newBet.winAmount())
-        print(newBet.loseAmount())
+        self.assertEqual(newBet.winAmount(),
+                         (newBet.amount * outcome5.odds) + newBet.amount)
+        self.assertEqual(newBet.loseAmount(), newBet.amount)
 
 
 class TableTest(GameTestCase):
@@ -84,9 +87,10 @@ class TableTest(GameTestCase):
         myOutcome3 = self.rouletteWheel.getOutcome('Black Bet')
         myBet3 = Bet(75, myOutcome3)
         currentTable.placeBet(myBet3)
-
+        """Check if bets are indeed at the table"""
         activeBets = [x.outcome.name for x in currentTable.__iter__()]
-        print(activeBets)
+        self.assertIn(myOutcome, activeBets)
+        self.assertIn(myOutcome3, activeBets)
 
 
 class RouletteGameTest(GameTestCase):
@@ -97,7 +101,11 @@ class RouletteGameTest(GameTestCase):
 
         player = Passenger57(currentTable, self.rouletteWheel)
         game = RouletteGame(self.rouletteWheel, currentTable)
-        game.cycle(player)
+        cycleSummary = game.cycle(player)
+
+        """Se a winning bin, conter o mesmo outcome que uma bet do jogador"""
+        for oc in cycleSummary['activeBets']:
+            self.assertIn(oc, cycleSummary['winningBin'].outcomes)
 
 
 testCase = OutcomeTest()

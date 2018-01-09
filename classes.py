@@ -7,6 +7,7 @@ __copyright__ = "Copyright 2018, Planet Earth"
 
 import random
 from exceptions import InvalidBet
+from utility import NonRandom
 
 
 class Outcome():
@@ -60,11 +61,15 @@ class Bin():
 
 class Wheel():
     """This contains the 38 bins of the Roulette, and a random number generator to
-        generate outcomes"""
+        generate outcomes
 
-    def __init__(self, rng):
+    The wheel now has a functional nonrandom gen for testing purposes.
+
+    """
+
+    def __init__(self, rng=None):
         self.bins = tuple(Bin() for i in range(38))
-        self.rng = rng
+        self.rng = rng  # if rng is not None else random.Random()
         self.AllOutcomesMap = set()
 
     def addToMap(self, outcome, binNumber):
@@ -85,7 +90,9 @@ class Wheel():
 
     def next(self):
         """Selects a random bin from 0 to 37, and returns it."""
-        return random.choice(self.bins)
+        if self.rng is None:
+            return random.choice(self.bins)
+        return NonRandom._choice(self.bins, self.rng)
 
     def get(self, index):
         """Returns desired Bin"""
