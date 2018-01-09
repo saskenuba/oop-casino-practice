@@ -93,7 +93,7 @@ class Wheel():
 
 
 class Bet():
-    "Allows a player(todo) to bet a specific amount to a specific outcome"
+    "Allows betting a specific amount to a specific outcome"
 
     def __init__(self, amount, outcome):
         self.amount = amount

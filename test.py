@@ -3,6 +3,8 @@
 
 import unittest
 from classes import Outcome, Bin, Wheel, Bet, Table
+from roulette import RouletteGame
+from player import Passenger57
 from BinBuilder import BinBuilder
 from exceptions import InvalidBet
 
@@ -52,7 +54,7 @@ class WheelTest(GameTestCase):
 class BinBuilderTest(GameTestCase):
     def runTest(self):
         BinBuilder(self.rouletteWheel)
-        print(self.rouletteWheel.get(4))
+        print(self.rouletteWheel.next())
 
 
 class BetTest(GameTestCase):
@@ -79,13 +81,32 @@ class TableTest(GameTestCase):
         with self.assertRaises(InvalidBet):
             currentTable.placeBet(myBet2)
 
+        myOutcome3 = self.rouletteWheel.getOutcome('Black Bet')
+        myBet3 = Bet(75, myOutcome3)
+        currentTable.placeBet(myBet3)
 
-#testCase = OutcomeTest()
-#testCase = BinTest()
-#testCase = WheelTest()
-#testCase = BinBuilderTest()
-#testCase = BetTest()
+        activeBets = [x.outcome.name for x in currentTable.__iter__()]
+        print(activeBets)
+
+
+class RouletteGameTest(GameTestCase):
+    def runTest(self):
+        BinBuilder(self.rouletteWheel)
+        currentTable = Table()
+        currentTable.Table()
+
+        player = Passenger57(currentTable, self.rouletteWheel)
+        game = RouletteGame(self.rouletteWheel, currentTable)
+        game.cycle(player)
+
+
+testCase = OutcomeTest()
+testCase = BinTest()
+testCase = WheelTest()
+testCase = BinBuilderTest()
+testCase = BetTest()
 testCase = TableTest()
+testCase = RouletteGameTest()
 
 if __name__ == '__main__':
     unittest.main()

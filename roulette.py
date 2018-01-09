@@ -1,4 +1,4 @@
-class Game():
+class RouletteGame():
     def __init__(self, wheel, table):
         """This class manages the sequences of actions that defines
         the game of Roulette.
@@ -18,10 +18,20 @@ class Game():
         """Executes a single cycle of play with a given player.
 
         First it will place the player bets, then the roullete will run
-        and chosse a winning bin.
+        and chose a winning bin.
 
         After, it will pick the iterator on the table, so it can check
         the active outcomes whose has bets on it.
         """
         player.placeBets()
-        self.table.next()
+        winningBin = self.wheel.next()
+        activeBets = [x.outcome for x in self.table.__iter__()]
+
+        print('Winning bin is {}'.format(winningBin))
+        print()
+        print('Active bets on table {}'.format(activeBets))
+
+        for oc in winningBin.outcomes:
+            if oc in activeBets:
+                return player.win(player.playerNewBet)
+        player.lose(player.playerNewBet)
