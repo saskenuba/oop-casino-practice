@@ -73,7 +73,7 @@ class TableTest(GameTestCase):
     def runTest(self):
         BinBuilder(self.rouletteWheel)
         currentTable = Table()
-        currentTable.Table()
+        currentTable.Table(self.rouletteWheel)
 
         myOutcome = self.rouletteWheel.getOutcome('Split 5-6')
         myBet = Bet(10, myOutcome)
@@ -97,12 +97,11 @@ class RouletteGameTest(GameTestCase):
     def runTest(self):
         BinBuilder(self.rouletteWheel)
         currentTable = Table()
-        currentTable.Table()
+        currentTable.Table(self.rouletteWheel)
 
-        player = Passenger57(currentTable, self.rouletteWheel)
+        player = Passenger57(currentTable)
         game = RouletteGame(self.rouletteWheel, currentTable)
         cycleSummary = game.cycle(player)
-
         """Se a winning bin, conter o mesmo outcome que uma bet do jogador"""
         for oc in cycleSummary['activeBets']:
             self.assertIn(oc, cycleSummary['winningBin'].outcomes)

@@ -122,13 +122,14 @@ class BinBuilder:
                 """Odd Bet"""
                 newOutcome = Outcome('Odd Bet', 1)
                 self.wheel.addOutcome(currentNumber, newOutcome)
+
                 """All red bins"""
-                reds = [
+                RED_BINS = [
                     1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32,
                     34, 36
                 ]
 
-            if currentNumber in reds:
+            if currentNumber in RED_BINS:
                 """Red Bet"""
                 newOutcome = Outcome('Red Bet', 1)
                 self.wheel.addOutcome(currentNumber, newOutcome)

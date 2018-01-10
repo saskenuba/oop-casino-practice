@@ -110,8 +110,8 @@ class Bet():
         return '{} on {}'.format(self.amount, self.outcome)
 
     def winAmount(self):
-        """Calculates the winnings on outcome and sums with the original bet"""
-        return self.outcome.winAmount(self.amount) + self.amount
+        """Calculates the winnings on outcome"""
+        return self.outcome.winAmount(self.amount)
 
     def loseAmount(self):
         return self.amount
@@ -123,26 +123,37 @@ class Table():
     def __init__(self):
         pass
 
-    def Table(self):
+    def Table(self, wheel):
         """Has the currently active bets and the limit of the table"""
         self.betLimit = 200
+        # TODO: Check if bet minimum is needed
+        self.betMinimum = 5
         self.activeBets = []
+        self.currentWheel = wheel
 
     def __iter__(self):
         return self.activeBets[:]
 
     def _isValid(self, bet):
         """Returns a boolean if the sum of all bets is less
-        or equal to the table limit"""
+        or equal to the table limit, and bet meets the table minimum."""
         total = int()
         for currentBets in self.activeBets:
             total += currentBets.amount
-        return (total + bet.amount) <= self.betLimit
+        return ((total + bet.amount) <=
+                self.betLimit) and bet.amount >= self.betMinimum
+
+    def clearAllBets(self):
+        return self.activeBets.clear()
 
     def placeBet(self, bet):
-        """Add bet to list of working bets, after checking for validity"""
+        """Add bet to list of working bets, after checking for validity
+
+        Returns 1 if bet was placed successfully.
+        """
         if self._isValid(bet):
             self.activeBets.append(bet)
+            return 1
         else:
             raise InvalidBet(
                 'The bet of {} exceeds the table limit of {}'.format(
