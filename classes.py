@@ -69,7 +69,7 @@ class Wheel():
 
     def __init__(self, rng=None):
         self.bins = tuple(Bin() for i in range(38))
-        self.rng = rng  # if rng is not None else random.Random()
+        self.rng = rng.eachOfSequence() if rng is not None else rng
         self.AllOutcomesMap = set()
 
     def addToMap(self, outcome, binNumber):
@@ -89,10 +89,15 @@ class Wheel():
                 return oc
 
     def next(self):
-        """Selects a random bin from 0 to 37, and returns it."""
+        """Selects a random bin from 0 to 37, and returns it.
+
+        If a nonrandom object is passed, then it selects the bin
+        in the arbitrary order."""
+
         if self.rng is None:
             return random.choice(self.bins)
-        return NonRandom._choice(self.bins, self.rng)
+        for value in self.rng:
+            return self.bins[value]
 
     def get(self, index):
         """Returns desired Bin"""

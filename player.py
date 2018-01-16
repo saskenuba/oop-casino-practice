@@ -1,5 +1,5 @@
 from classes import Bet
-from exceptions import InvalidBet
+from exceptions import InvalidBet, PlayerError
 
 
 class Player():
@@ -15,13 +15,13 @@ class Player():
         """Method to credit stake to player"""
         amountWon = bet.winAmount()
         self.stake += amountWon
-        print('You won {} by betting {}.'.format(amountWon, bet))
+        #print('You won {} by betting {}.'.format(amountWon, bet))
 
     def lose(self, bet):
         """Method to debit stake from player"""
         amountLost = bet.loseAmount()
         self.stake -= amountLost
-        print('You lost {} by betting {}.'.format(bet.loseAmount(), bet))
+        #print('You lost {} by betting {}.'.format(bet.loseAmount(), bet))
 
     def isPlaying(self):
         """Returns player current status.
@@ -38,6 +38,10 @@ class Player():
         """Take one round out of the player."""
         self.roundsToGo -= 1
 
+    def reset(args):
+        """Reset player to initial settings"""
+        pass
+
 
 class Passenger57(Player):
     def __init__(self, table):
@@ -50,7 +54,7 @@ class Passenger57(Player):
         self.nextBet = self.initialBet
 
         if not self.isPlaying():
-            raise InvalidBet("Player has left the table.")
+            raise PlayerError("Player has left the table.")
 
         self.playerNewBet = Bet(self.nextBet, self.favoriteBet)
         self.table.placeBet(self.playerNewBet)
@@ -79,6 +83,12 @@ class Martingale(Player):
         super().win(bet)
         self.lossCount = 0
         self.betMultiple = 1
+
+    def reset(self):
+        """Hard reset player to initial settings"""
+        super().reset()
+        self.betMultiple = 1
+        self.lossCount = 0
 
     def lose(self, bet):
         """Updates also loss count"""

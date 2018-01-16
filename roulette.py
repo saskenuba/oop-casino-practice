@@ -30,8 +30,8 @@ class RouletteGame():
         the active outcomes whose has bets on it.
         """
 
-        if not player.isPlaying():
-            raise PlayerError('Player left the game.')
+        #if not player.isPlaying():
+        #    raise PlayerError('Player left the game.')
 
         player.placeBets()
         player.roundOneLess()
@@ -41,6 +41,7 @@ class RouletteGame():
 
         if debug:
             print()
+            print('There are {} rounds left.'.format(player.roundsToGo))
             print('Active bets on table {}'.format(next(iter(activeBets))))
             print('Player budget before roll: {}'.format(player.stake))
             print('Winning bin is {}'.format(next(iter(winningBin.outcomes))))

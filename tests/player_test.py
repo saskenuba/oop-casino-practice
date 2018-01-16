@@ -7,46 +7,34 @@ from exceptions import InvalidBet, PlayerError
 from utility import NonRandom
 
 
-class GameTestCase(unittest.TestCase):
+class test_Game(unittest.TestCase):
     def setUp(self):
         # creating wheel with nonrandom value
         notSoRandom = NonRandom()
-        notSoRandom.setSeed(35)
+        notSoRandom.setSeed(33)
 
-        self.rouletteWheel = Wheel()
+        self.rouletteWheel = Wheel(notSoRandom)
         BinBuilder(self.rouletteWheel)
 
         self.currentTable = Table()
         self.currentTable.Table(self.rouletteWheel)
+        self.game = RouletteGame(self.rouletteWheel, self.currentTable)
 
+    def tearDown(self):
+        del self.game
 
-class Passenger57Test(GameTestCase):
-    def hehe(self):
+    def test_Player_Passenger57(self):
         playerPassenger = Passenger57(self.currentTable)
-        game = RouletteGame(self.rouletteWheel, self.currentTable)
+        expectedStake = [205, 210, 215, 210, 205, 200, 205]
 
-        while True:
-            try:
-                game.cycle(playerPassenger, 0)
-            except InvalidBet as betError:
-                self.assertIsInstance(betError, InvalidBet)
-                break
-            except PlayerError as playerError:
-                self.assertIsInstance(playerError, PlayerError)
-                break
+        for i in range(6):
+            self.game.cycle(playerPassenger, 0)
+            self.assertEqual(playerPassenger.stake, expectedStake[i])
 
-
-class MartingaleTest(GameTestCase):
-    def runTest(self):
-        playerPassenger = Martingale(self.currentTable)
-        game = RouletteGame(self.rouletteWheel, self.currentTable)
-
-        while True:
-            try:
-                game.cycle(playerPassenger, 0)
-            except InvalidBet as betError:
-                self.assertIsInstance(betError, InvalidBet)
-                break
-            except PlayerError as playerError:
-                self.assertIsInstance(playerError, PlayerError)
-                break
+    def test_Player_Martingale(self):
+        playerMartingale = Martingale(self.currentTable)
+        expectedStake = [205, 210, 215, 210, 200, 180, 220]
+        """Expect Player to left the game because lack of funds."""
+        for i in range(6):
+            self.game.cycle(playerMartingale, 0)
+            self.assertEqual(playerMartingale.stake, expectedStake[i])
