@@ -1,11 +1,13 @@
 import unittest
 from classes import Outcome, Bin, Wheel, Bet, Table
 from roulette import RouletteGame
-from player import Passenger57, Martingale
+from player import Passenger57, Martingale, SevenReds
 from binbuilder import BinBuilder
 from exceptions import InvalidBet, PlayerError
 from utility import NonRandom
 
+# TODO: test apropriately 7 losses, doubling after each loss, and then bet on blacks.
+# TODO: Continue on the statistics section
 
 class test_Game(unittest.TestCase):
     def setUp(self):
@@ -41,3 +43,9 @@ class test_Game(unittest.TestCase):
         for i in range(6):
             self.game.cycle(playerMartingale, 0)
             self.assertEqual(playerMartingale.stake, expectedStake[i])
+
+    def test_Player_SevenReds(self):
+        playerSevenReds = SevenReds(self.currentTable)
+        self.currentTable.betLimit = 1000
+        for i in range(50):
+            self.game.cycle(playerSevenReds, 0)

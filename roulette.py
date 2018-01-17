@@ -39,12 +39,20 @@ class RouletteGame():
         winningBin = self.wheel.next()
         activeBets = [x.outcome for x in self.table.__iter__()]
 
+        if winningBin is None:
+            # There has to be an outcome
+            return
+
         if debug:
             print()
             print('There are {} rounds left.'.format(player.roundsToGo))
             print('Active bets on table {}'.format(next(iter(activeBets))))
             print('Player budget before roll: {}'.format(player.stake))
             print('Winning bin is {}'.format(next(iter(winningBin.outcomes))))
+
+        roundSummary = {'winningBin': winningBin, 'activeBets': activeBets}
+
+        player.setWinners(winningBin.outcomes)
 
         for oc in activeBets:
             if oc in winningBin.outcomes:
@@ -58,4 +66,4 @@ class RouletteGame():
 
         self.table.clearAllBets()
 
-        return {'winningBin': winningBin, 'activeBets': activeBets}
+        return roundSummary
