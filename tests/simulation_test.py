@@ -12,7 +12,8 @@ class test_Game(unittest.TestCase):
     def setUp(self):
         # creating wheel with nonrandom value
         notSoRandom = NonRandom()
-        notSoRandom.setSeed(36)
+        notSoRandom.setSeed(32)
+        notSoRandom.setCustomSequence([32, 32, 32, 32, 32, 32, 32, 33])
 
         self.rouletteWheel = Wheel(notSoRandom)
         BinBuilder(self.rouletteWheel)

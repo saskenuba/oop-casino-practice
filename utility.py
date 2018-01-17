@@ -25,6 +25,9 @@ class NonRandom(random.Random):
             self.value + 1, self.value + 2
         ]
 
+    def setCustomSequence(self, sequence):
+        self.listOfValues = sequence
+
     def randomInt(self):
         return self.value
 

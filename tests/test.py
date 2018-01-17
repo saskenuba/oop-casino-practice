@@ -8,6 +8,7 @@ from player import Passenger57
 from binbuilder import BinBuilder
 from exceptions import InvalidBet
 from utility import NonRandom
+from statistics import IntegerStatistics
 
 
 class GameTestCase(unittest.TestCase):
@@ -105,13 +106,12 @@ class RouletteGameTest(GameTestCase):
             self.assertIn(oc, cycleSummary['winningBin'].outcomes)
 
 
-testCase = OutcomeTest()
-testCase = BinTest()
-testCase = WheelTest()
-testCase = BinBuilderTest()
-testCase = BetTest()
-testCase = TableTest()
-testCase = RouletteGameTest()
+class IntegerStatisticsTest(GameTestCase):
+    def runTest(self):
+        samples = [9, 8, 5, 9, 9, 4, 5, 8, 10, 7, 8, 8]
+        self.assertEqual(IntegerStatistics.mean(samples), 7.5)
+        self.assertAlmostEqual(IntegerStatistics.stdev(samples), 1.88293, 4)
+
 
 if __name__ == '__main__':
     unittest.main()

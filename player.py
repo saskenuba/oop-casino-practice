@@ -132,7 +132,6 @@ class SevenReds(Martingale):
         super().setWinners(outcomes)
 
         if self.favoriteBet not in self.winners:
-            print(self.redCount)
             self.redCount -= 1
         else:
             self.redCount = 7
@@ -140,8 +139,9 @@ class SevenReds(Martingale):
     def placeBets(self):
         """Only bets after seven reds"""
         if self.redCount == 0:
-            print('apostei')
             super().placeBets()
+        elif not self.isPlaying():
+            raise PlayerError('No budget left to meet table minimum.')
         return
 
     def win(self, bet):
