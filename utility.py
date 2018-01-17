@@ -4,6 +4,9 @@ such as the nonrandom function"""
 
 import random
 
+# TODO: the main is failing because we run out of predictable outcomes,
+# so try to setup a pattern
+
 
 class NonRandom(random.Random):
     """A class to generate not so random numbers. Pick a seed and it will

@@ -8,20 +8,18 @@ class Player():
         self.stake = 200
         self.roundsToGo = 30
         self.table = table
-        self.initialBet = 5
+        self.initialBet = 10
         self.nextBet = self.initialBet
 
     def win(self, bet):
         """Method to credit stake to player"""
         amountWon = bet.winAmount()
         self.stake += amountWon
-        #print('You won {} by betting {}.'.format(amountWon, bet))
 
     def lose(self, bet):
         """Method to debit stake from player"""
         amountLost = bet.loseAmount()
         self.stake -= amountLost
-        #print('You lost {} by betting {}.'.format(bet.loseAmount(), bet))
 
     def isPlaying(self):
         """Returns player current status.
@@ -53,8 +51,9 @@ class Passenger57(Player):
         """Updates the table he is playing with bets."""
         self.nextBet = self.initialBet
 
+        # there was an except here, out of budget
         if not self.isPlaying():
-            raise PlayerError("Player has left the table.")
+            return 0
 
         self.playerNewBet = Bet(self.nextBet, self.favoriteBet)
         self.table.placeBet(self.playerNewBet)
@@ -72,11 +71,16 @@ class Martingale(Player):
         """Updates the table he is playing with bets."""
         self.nextBet = self.initialBet * self.betMultiple
 
+        # there was an except here, out of budget
         if not self.isPlaying():
-            raise InvalidBet("Player has left the table.")
+            raise PlayerError('No budget left to meet table minimum.')
 
         self.playerNewBet = Bet(self.nextBet, self.favoriteBet)
-        self.table.placeBet(self.playerNewBet)
+
+        try:
+            self.table.placeBet(self.playerNewBet)
+        except (InvalidBet) as error:
+            raise InvalidBet('Bet over table limit.')
 
     def win(self, bet):
         """Reset loss count and bet multiple"""

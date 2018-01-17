@@ -6,7 +6,7 @@ __author__ = "Martin Mariano"
 __copyright__ = "Copyright 2018, Planet Earth"
 
 import random
-from exceptions import InvalidBet
+from exceptions import InvalidBet, InvalidBin
 from utility import NonRandom
 
 
@@ -97,6 +97,9 @@ class Wheel():
         if self.rng is None:
             return random.choice(self.bins)
         for value in self.rng:
+            if value > 37:
+                raise InvalidBin(
+                    'Your testing bins went over 38, chose another seed')
             return self.bins[value]
 
     def get(self, index):
@@ -128,14 +131,6 @@ class Table():
     def __init__(self):
         pass
 
-    def Table(self, wheel):
-        """Has the currently active bets and the limit of the table"""
-        self.betLimit = 200
-        # TODO: Check if bet minimum is needed
-        self.betMinimum = 5
-        self.activeBets = []
-        self.currentWheel = wheel
-
     def __iter__(self):
         return self.activeBets[:]
 
@@ -148,6 +143,13 @@ class Table():
         return ((total + bet.amount) <=
                 self.betLimit) and bet.amount >= self.betMinimum
 
+    def Table(self, wheel):
+        """Has the currently active bets and the limit of the table"""
+        self.betLimit = 200
+        self.betMinimum = 10
+        self.activeBets = []
+        self.currentWheel = wheel
+
     def clearAllBets(self):
         return self.activeBets.clear()
 
@@ -158,7 +160,6 @@ class Table():
         """
         if self._isValid(bet):
             self.activeBets.append(bet)
-            return 1
         else:
             raise InvalidBet(
                 'The bet of {} exceeds the table limit of {}'.format(

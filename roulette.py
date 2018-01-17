@@ -1,4 +1,4 @@
-from exceptions import PlayerError
+from exceptions import PlayerError, InvalidBet
 
 
 class RouletteGame():
@@ -30,11 +30,11 @@ class RouletteGame():
         the active outcomes whose has bets on it.
         """
 
-        #if not player.isPlaying():
-        #    raise PlayerError('Player left the game.')
-
-        player.placeBets()
-        player.roundOneLess()
+        try:
+            player.placeBets()
+            player.roundOneLess()
+        except (PlayerError, InvalidBet) as e:
+            raise
 
         winningBin = self.wheel.next()
         activeBets = [x.outcome for x in self.table.__iter__()]

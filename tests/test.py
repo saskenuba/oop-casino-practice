@@ -19,8 +19,8 @@ class GameTestCase(unittest.TestCase):
 
         # creating wheel with nonrandom value
         notSoRandom = NonRandom()
-        notSoRandom.setSeed(35)
-        self.rouletteWheel = Wheel(notSoRandom.randomInt())
+        notSoRandom.setSeed(31)
+        self.rouletteWheel = Wheel(notSoRandom)
 
 
 class OutcomeTest(GameTestCase):
@@ -50,8 +50,7 @@ class WheelTest(GameTestCase):
         and placing a bet on it"""
         myOutcome = self.rouletteWheel.getOutcome('Street 4-5-6')
         newBet = Bet(10, myOutcome)
-        self.assertEqual(newBet.winAmount(),
-                         (newBet.amount * myOutcome.odds) + newBet.amount)
+        self.assertEqual(newBet.winAmount(), newBet.amount * myOutcome.odds)
 
 
 class BinBuilderTest(GameTestCase):
@@ -64,8 +63,7 @@ class BetTest(GameTestCase):
         BinBuilder(self.rouletteWheel)
         outcome5 = Outcome('Number 25', 35)
         newBet = Bet(25, outcome5)
-        self.assertEqual(newBet.winAmount(),
-                         (newBet.amount * outcome5.odds) + newBet.amount)
+        self.assertEqual(newBet.winAmount(), newBet.amount * outcome5.odds)
         self.assertEqual(newBet.loseAmount(), newBet.amount)
 
 

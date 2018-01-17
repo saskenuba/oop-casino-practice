@@ -1,12 +1,10 @@
 from exceptions import InvalidBet, PlayerError
-import player
-
-# TODO: simulator class, enviar deliverables
 
 
 class Simulator():
     def __init__(self, player, game):
-        """Returns statistics of the chosen casino game with a given player/betting strategy.
+        """Returns statistics of the chosen casino game with a given
+        player/betting strategy.
 
         It reports raw statistics on a number of sessions of play.
 
@@ -35,11 +33,13 @@ class Simulator():
                 self.game.cycle(self.player, 0)
                 stakeList.append(self.player.stake)
         except (PlayerError, InvalidBet) as e:
-            print(e)
             return stakeList
 
     def gather(self):
-        """Executes the number of session indicated by samples parameter"""
+        """Executes the number of session indicated by samples parameter
+
+        Returns a tuple with the session maximum stakes, and the number of
+        rounds."""
         durations = list()
         maxima = list()
 

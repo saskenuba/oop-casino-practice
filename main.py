@@ -1,10 +1,14 @@
 from binbuilder import BinBuilder
 from classes import Wheel, Table
-from player import Martingale, Passenger57
+from player import Martingale
 from roulette import RouletteGame
 from simulator import Simulator
-import simulator
-import roulette
+from utility import NonRandom
+from contextlib import suppress
+from exceptions import InvalidBet, PlayerError
+
+notSoRandom = NonRandom()
+notSoRandom.setSeed(3)
 
 rouletteWheel = Wheel()
 BinBuilder(rouletteWheel)
@@ -17,4 +21,8 @@ rouletteGame = RouletteGame(rouletteWheel, rouletteTable)
 rouletteSimulation = Simulator(Martingale(rouletteTable), rouletteGame)
 
 # TODO: proper output gather to stdout
-print(rouletteSimulation.gather())
+with suppress(PlayerError, InvalidBet):
+    (maxima, duration) = rouletteSimulation.gather()
+    zipped = zip(maxima, duration)
+    print(list(zipped))
+    print(max(maxima))
