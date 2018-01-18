@@ -8,6 +8,7 @@ from player import Passenger57
 from binbuilder import BinBuilder
 from exceptions import InvalidBet
 from utility import NonRandom
+import random
 from statistics import IntegerStatistics
 
 
@@ -38,6 +39,10 @@ class BinTest(GameTestCase):
         self.assertIsInstance(zero, Bin)
         self.assertIsInstance(zerozero, Bin)
         self.assertIsInstance(lowTwelve, Bin)
+
+        self.assertIn(self.outcome1, lowTwelve)
+        self.assertIn(self.outcome3, lowTwelve)
+        self.assertNotIn(self.outcome2, lowTwelve)
 
 
 class WheelTest(GameTestCase):

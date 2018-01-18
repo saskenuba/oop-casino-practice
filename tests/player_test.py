@@ -1,7 +1,7 @@
 import unittest
 from classes import Wheel, Table
 from roulette import RouletteGame
-from player import Passenger57, Martingale, SevenReds
+from player import Passenger57, Martingale, SevenReds, PlayerRandom
 from binbuilder import BinBuilder
 from exceptions import InvalidBet, PlayerError
 from utility import NonRandom
@@ -54,3 +54,9 @@ class test_Game(unittest.TestCase):
             if i == 16:
                 self.assertEqual(playerSevenReds.stake, 210)
             self.game.cycle(playerSevenReds, 0)
+
+    def test_Player_PlayerRandom(self):
+        playerRandom = PlayerRandom(self.currentTable, self.notSoRandom)
+        self.game.cycle(playerRandom, 0)
+        self.assertIn(playerRandom.favoriteBet,
+                      self.rouletteWheel.getBin(self.notSoRandom.value))

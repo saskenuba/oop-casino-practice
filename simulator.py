@@ -42,13 +42,15 @@ class Simulator():
         rounds."""
         durations = list()
         maxima = list()
+        minima = list()
 
         for _ in range(self.initDuration):
             sessionStakes = self.session()
             durations.append(len(sessionStakes))
             maxima.append(max(sessionStakes))
+            minima.append(min(sessionStakes))
 
-        return (maxima, durations)
+        return (maxima, minima, durations)
 
     def setUpSession(self):
         """Do the initial setup for the session to start."""

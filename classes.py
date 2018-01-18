@@ -7,7 +7,6 @@ __copyright__ = "Copyright 2018, Planet Earth"
 
 import random
 from exceptions import InvalidBet, InvalidBin
-from utility import NonRandom
 
 
 class Outcome():
@@ -44,19 +43,26 @@ class Bin():
     """Contains all the possible outcomes at a determined bin."""
 
     def __init__(self, *outcomes):
-        self.outcomes = frozenset(outcomes)
+        self._outcomes = frozenset(outcomes)
 
     def __str__(self):
         'Easy to check representation of the outcomes'
         return ", ".join(map(str, self.outcomes))
 
+    def __iter__(self):
+        return self.__next__()
+
+    def __next__(self):
+        return (outcome for outcome in self._outcomes)
+
+    @property
     def outcomes(self):
         """Getter for outcomes"""
-        return self.outcomes
+        return self._outcomes
 
     def add(self, outcome):
         """ Adds a new outcome to the frozenset """
-        self.outcomes |= frozenset([outcome])
+        self._outcomes |= frozenset([outcome])
 
 
 class Wheel():
@@ -71,6 +77,15 @@ class Wheel():
         self.bins = tuple(Bin() for i in range(38))
         self.rng = rng.eachOfSequence() if rng is not None else rng
         self.AllOutcomesMap = set()
+
+    def __iter__(self):
+        return self.bins
+
+    def __getitem__(self, key):
+        return self.bins[key]
+
+    def __len__(self):
+        return len(self.bins)
 
     def addToMap(self, outcome, binNumber):
         """This adds the current outcome NAME to the collection
@@ -88,6 +103,10 @@ class Wheel():
             if oc.name.lower() in outcomeName.lower():
                 return oc
 
+    def getBin(self, key):
+        """Getter for specified bin"""
+        return self.bins[key]
+
     def next(self):
         """Selects a random bin from 0 to 37, and returns it.
 
@@ -101,10 +120,6 @@ class Wheel():
                 raise InvalidBin(
                     'Your testing bins went over 38, chose another seed')
             return self.bins[value]
-
-    def get(self, index):
-        """Returns desired Bin"""
-        return self.bins[index]
 
 
 class Bet():

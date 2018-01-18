@@ -1,5 +1,6 @@
 from classes import Bet
 from exceptions import InvalidBet, PlayerError
+import random
 
 
 class Player():
@@ -60,9 +61,7 @@ class Player():
         """Updates the table he is playing with bets.
 
         This should be extended by subclasses with the desired
-        next bet strategy.
-
-        """
+        next bet strategy."""
 
         if not self.isPlaying():
             raise PlayerError('No budget left to meet table minimum.')
@@ -73,6 +72,19 @@ class Player():
             self.table.placeBet(self.playerNewBet)
         except (InvalidBet) as error:
             raise InvalidBet('Bet over table limit.')
+
+
+class PlayerRandom(Player):
+    def __init__(self, table, rng=None):
+        "Player that make random bets"
+        super().__init__(table)
+        self.rng = rng
+
+    def placeBets(self):
+        """Chose a random outcome"""
+        self.favoriteBet = random.sample(
+            self.rng.choice(self.table.currentWheel).outcomes, k=1)[0]
+        super().placeBets()
 
 
 class Passenger57(Player):
