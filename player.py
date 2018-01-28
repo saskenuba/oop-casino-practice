@@ -1,4 +1,5 @@
 from classes import Bet
+from functools import partial
 from exceptions import InvalidBet, PlayerError
 import random
 
@@ -205,18 +206,26 @@ class Player1326State():
     """
     This is the superclass of all Player1326 states.
 
-    currentBet(obj:bet)
+    currentBet(obj:bet): set the amount to be betted by the current
+    state of the bet strategy.
+
     """
 
     def __init__(self, player):
         "docstring"
         self.player = player
+        self.betMultiplier = int()
 
     def currentBet(self):
-        return NotImplemented
+        """Method used to set the amount to be betted.
+
+        This method got refactored from being extended to each class,
+        to the superclass."""
+        self.player.nextBet = self.player.initialBet * self.betMultiplier
 
     def nextWon(self):
-        return NotImplemented
+        """Assign the next state to context on win."""
+        self.player.state = self.nextStateWin()
 
     def nextLost(self):
         """Creates new Player1326State instance to be used when
@@ -232,49 +241,29 @@ class Player1326ZeroWins(Player1326State):
     def __init__(self, player):
         "State where player hasnt won any bet"
         super().__init__(player)
-
-    def currentBet(self):
-        # these are the player's attributes
-        self.player.nextBet = self.player.initialBet * 1
-
-    def nextWon(self):
-        self.player.state = Player1326OneWins(self.player)
+        self.betMultiplier = 1
+        self.nextStateWin = partial(Player1326OneWins, self.player)
 
 
 class Player1326OneWins(Player1326State):
     def __init__(self, player):
         "State where player has won one bet"
         super().__init__(player)
-
-    def currentBet(self):
-        # these are the player's attributes
-        self.player.nextBet = self.player.initialBet * 3
-
-    def nextWon(self):
-        self.player.state = Player1326TwoWins(self.player)
+        self.betMultiplier = 3
+        self.nextStateWin = partial(Player1326TwoWins, self.player)
 
 
 class Player1326TwoWins(Player1326State):
     def __init__(self, player):
         "State where player has won two bet"
         super().__init__(player)
-
-    def currentBet(self):
-        # these are the player's attributes
-        self.player.nextBet = self.player.initialBet * 2
-
-    def nextWon(self):
-        self.player.state = Player1326ThreeWins(self.player)
+        self.betMultiplier = 2
+        self.nextStateWin = partial(Player1326ThreeWins, self.player)
 
 
 class Player1326ThreeWins(Player1326State):
     def __init__(self, player):
         "State where player has won three bet"
         super().__init__(player)
-
-    def currentBet(self):
-        # these are the player's attributes
-        self.player.nextBet = self.player.initialBet * 6
-
-    def nextWon(self):
-        self.player.state = Player1326ZeroWins(self.player)
+        self.betMultiplier = 6
+        self.nextStateWin = partial(Player1326ZeroWins, self.player)
