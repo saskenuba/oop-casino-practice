@@ -76,9 +76,11 @@ class Player():
 
 class PlayerRandom(Player):
     def __init__(self, table, rng=None):
-        "Player that make random bets"
+        """Player that make random bets.
+
+        rng (obj:: NonRandom) OPTIONAL arg: if user wants predictable outcome"""
         super().__init__(table)
-        self.rng = rng
+        self.rng = rng if rng is not None else random.Random()
 
     def placeBets(self):
         """Chose a random outcome"""
@@ -163,3 +165,116 @@ class SevenReds(Martingale):
     def lose(self, bet):
         super().lose(bet)
         self.redCount = 7
+
+
+# Applying the state behavior design pattern to Player 1-3-2-6 Class
+class Player1326(Player):
+    def __init__(self, table):
+        """docstring"""
+        super().__init__(table)
+        self.favoriteBet = self.table.currentWheel.getOutcome('Black Bet')
+
+        # TODO: state should be the current state of the 1326 betting system
+        # An instance of the subclass Player1326State
+        self.state = Player1326ZeroWins(self)
+
+    def placeBets(self):
+        """Updates the table with a bet based on current state"""
+        self.state.currentBet()
+        super().placeBets()
+
+    def win(self, bet):
+        """Extends superclass method to update player stake.
+        Use current state to determine what next state will be.
+        Delegate decision to state object."""
+        super().win(bet)
+        self.state.nextWon()
+
+    def lose(self, bet):
+        """Overrides superclass method.
+        Use current state to determine what next state will be.
+        Delegate decision to state object."""
+        super().lose(bet)
+        self.state.nextLost()
+
+
+# TODO: lembrar de refatorar toda essa merda pra baixo
+
+
+class Player1326State():
+    """
+    This is the superclass of all Player1326 states.
+
+    currentBet(obj:bet)
+    """
+
+    def __init__(self, player):
+        "docstring"
+        self.player = player
+
+    def currentBet(self):
+        return NotImplemented
+
+    def nextWon(self):
+        return NotImplemented
+
+    def nextLost(self):
+        """Creates new Player1326State instance to be used when
+        bet was loser. This method is the same for every subclass,
+        because whenever the player lose the method is the same """
+        self.player.state = Player1326ZeroWins(self.player)
+
+
+# All subclasses of player 1326 state
+
+
+class Player1326ZeroWins(Player1326State):
+    def __init__(self, player):
+        "State where player hasnt won any bet"
+        super().__init__(player)
+
+    def currentBet(self):
+        # these are the player's attributes
+        self.player.nextBet = self.player.initialBet * 1
+
+    def nextWon(self):
+        self.player.state = Player1326OneWins(self.player)
+
+
+class Player1326OneWins(Player1326State):
+    def __init__(self, player):
+        "State where player has won one bet"
+        super().__init__(player)
+
+    def currentBet(self):
+        # these are the player's attributes
+        self.player.nextBet = self.player.initialBet * 3
+
+    def nextWon(self):
+        self.player.state = Player1326TwoWins(self.player)
+
+
+class Player1326TwoWins(Player1326State):
+    def __init__(self, player):
+        "State where player has won two bet"
+        super().__init__(player)
+
+    def currentBet(self):
+        # these are the player's attributes
+        self.player.nextBet = self.player.initialBet * 2
+
+    def nextWon(self):
+        self.player.state = Player1326ThreeWins(self.player)
+
+
+class Player1326ThreeWins(Player1326State):
+    def __init__(self, player):
+        "State where player has won three bet"
+        super().__init__(player)
+
+    def currentBet(self):
+        # these are the player's attributes
+        self.player.nextBet = self.player.initialBet * 6
+
+    def nextWon(self):
+        self.player.state = Player1326ZeroWins(self.player)

@@ -1,7 +1,9 @@
 import unittest
 from classes import Wheel, Table
 from roulette import RouletteGame
-from player import Passenger57, Martingale, SevenReds, PlayerRandom
+from player import Passenger57, Martingale, SevenReds, PlayerRandom, Player1326
+from player import Player1326ZeroWins, Player1326OneWins, Player1326TwoWins
+from player import Player1326ThreeWins
 from binbuilder import BinBuilder
 from exceptions import InvalidBet, PlayerError
 from utility import NonRandom
@@ -25,6 +27,7 @@ class test_Game(unittest.TestCase):
 
     def tearDown(self):
         del self.game
+        del self.notSoRandom
 
     def test_Player_Passenger57(self):
         playerPassenger = Passenger57(self.currentTable)
@@ -60,3 +63,35 @@ class test_Game(unittest.TestCase):
         self.game.cycle(playerRandom, 0)
         self.assertIn(playerRandom.favoriteBet,
                       self.rouletteWheel.getBin(self.notSoRandom.value))
+
+    def test_Player_Player1326(self):
+        player1326 = Player1326(self.currentTable)
+        self.notSoRandom.setCustomSequence(
+            [33, 33, 33, 33, 32, 33, 33, 33, 32, 33, 33, 32, 33, 32])
+        expectedStake = [
+            210, 240, 260, 320, 310, 320, 350, 370, 310, 320, 350, 330, 340,
+            310
+        ]
+
+        for roll in range(14):
+            self.game.cycle(player1326, 0)
+            if roll == 3:
+                # win whole strategy
+                self.assertIsInstance(player1326.state, Player1326ZeroWins)
+                self.assertEqual(player1326.stake, expectedStake[roll])
+            elif roll == 7:
+                # got three wins
+                self.assertIsInstance(player1326.state, Player1326ThreeWins)
+                self.assertEqual(player1326.stake, expectedStake[roll])
+            elif roll == 10:
+                # got two wins
+                self.assertIsInstance(player1326.state, Player1326TwoWins)
+                self.assertEqual(player1326.stake, expectedStake[roll])
+            elif roll == 12:
+                # got one win
+                self.assertIsInstance(player1326.state, Player1326OneWins)
+                self.assertEqual(player1326.stake, expectedStake[roll])
+            elif roll == 13:
+                # got no wins
+                self.assertIsInstance(player1326.state, Player1326ZeroWins)
+                self.assertEqual(player1326.stake, expectedStake[roll])
