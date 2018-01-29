@@ -175,9 +175,8 @@ class Player1326(Player):
         super().__init__(table)
         self.favoriteBet = self.table.currentWheel.getOutcome('Black Bet')
 
-        # TODO: state should be the current state of the 1326 betting system
-        # An instance of the subclass Player1326State
-        self.state = Player1326ZeroWins(self)
+        # default state
+        self.state = Player1326StateFactory.getInstance('zerowins', self)
 
     def placeBets(self):
         """Updates the table with a bet based on current state"""
@@ -197,9 +196,6 @@ class Player1326(Player):
         Delegate decision to state object."""
         super().lose(bet)
         self.state.nextLost()
-
-
-# TODO: lembrar de refatorar toda essa merda pra baixo
 
 
 class Player1326State():
@@ -231,7 +227,39 @@ class Player1326State():
         """Creates new Player1326State instance to be used when
         bet was loser. This method is the same for every subclass,
         because whenever the player lose the method is the same """
-        self.player.state = Player1326ZeroWins(self.player)
+        self.player.state = Player1326StateFactory.getInstance(
+            'zerowins', self)
+
+
+class Player1326StateFactory():
+    """This is a factory with lazy instantiation. It saves a reference to the obj
+    to avoid repeating obj creationg."""
+    _values = dict()
+
+    @classmethod
+    def getInstance(cls, name, player):
+        if name in cls._values:
+            return cls._values[name]
+
+        if name == 'zerowins':
+            plr = Player1326ZeroWins(player)
+            cls._values['zerowins'] = plr
+            return cls._values['zerowins']
+
+        elif name == 'onewins':
+            plr = Player1326OneWins(player)
+            cls._values['onewins'] = plr
+            return cls._values['onewins']
+
+        elif name == 'twowins':
+            plr = Player1326TwoWins(player)
+            cls._values['twowins'] = plr
+            return cls._values['twowins']
+
+        elif name == 'threewins':
+            plr = Player1326ThreeWins(player)
+            cls._values['threewins'] = plr
+            return cls._values['threewins']
 
 
 # All subclasses of player 1326 state
@@ -242,7 +270,8 @@ class Player1326ZeroWins(Player1326State):
         "State where player hasnt won any bet"
         super().__init__(player)
         self.betMultiplier = 1
-        self.nextStateWin = partial(Player1326OneWins, self.player)
+        self.nextStateWin = partial(Player1326StateFactory.getInstance,
+                                    'onewins', self.player)
 
 
 class Player1326OneWins(Player1326State):
@@ -250,7 +279,8 @@ class Player1326OneWins(Player1326State):
         "State where player has won one bet"
         super().__init__(player)
         self.betMultiplier = 3
-        self.nextStateWin = partial(Player1326TwoWins, self.player)
+        self.nextStateWin = partial(Player1326StateFactory.getInstance,
+                                    'twowins', self.player)
 
 
 class Player1326TwoWins(Player1326State):
@@ -258,7 +288,8 @@ class Player1326TwoWins(Player1326State):
         "State where player has won two bet"
         super().__init__(player)
         self.betMultiplier = 2
-        self.nextStateWin = partial(Player1326ThreeWins, self.player)
+        self.nextStateWin = partial(Player1326StateFactory.getInstance,
+                                    'threewins', self.player)
 
 
 class Player1326ThreeWins(Player1326State):
@@ -266,4 +297,5 @@ class Player1326ThreeWins(Player1326State):
         "State where player has won three bet"
         super().__init__(player)
         self.betMultiplier = 6
-        self.nextStateWin = partial(Player1326ZeroWins, self.player)
+        self.nextStateWin = partial(Player1326StateFactory.getInstance,
+                                    'zerowins', self.player)
